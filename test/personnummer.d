@@ -25,6 +25,7 @@ JSONValue testList()
     return _testList;
 }
 
+// test personnummer list
 unittest
 {
     foreach (i, item; testList.array())
@@ -36,6 +37,7 @@ unittest
     }
 }
 
+// test personnummer format
 unittest
 {
     foreach (i, item; testList.array())
@@ -56,6 +58,7 @@ unittest
     }
 }
 
+// test personnummer exceptions
 unittest
 {
     foreach (i, item; testList.array())
@@ -70,6 +73,7 @@ unittest
     }
 }
 
+// test personnummer sex
 unittest
 {
     foreach (i, item; testList.array())
