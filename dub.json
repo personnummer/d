@@ -1,0 +1,21 @@
+{
+  "authors": ["Personnummer and Contributors"],
+  "copyright": "Copyright © 2020, Personnummer and Contributors",
+  "description": "Validate Swedish personal identity numbers.",
+  "license": "MIT",
+  "name": "personnummer",
+  "configurations": [
+    {
+      "name": "lib",
+      "targetName": "personnummer",
+      "targetType": "library",
+      "excludedSourceFiles": ["test/*.d"]
+    },
+    {
+      "name": "unittest",
+      "targetType": "library",
+      "sourcePaths": ["test"],
+      "importPaths": ["test"]
+    }
+  ]
+}
