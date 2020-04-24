@@ -12,7 +12,7 @@ int lunh(string str) {
 
 	foreach (i, s; zip(sequence!"n", str.stride(1))) {
 		s -= '0';
-    	int v = s <= 9 ? s : -1;
+		int v = s <= 9 ? s : -1;
 		if (i % 2 == 0) {
 			v *= 2;
 		}
