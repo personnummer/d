@@ -23,11 +23,6 @@ JSONValue testList()
     return _testList;
 }
 
-
-//auto content = get("https://raw.githubusercontent.com/personnummer/meta/master/testdata/list.json");
-//JSONValue j = parseJSON(content);
-//writeln(j[0]["short_format"]);
-
 unittest {
     foreach (i, item; testList.array()) {
         foreach (j, format; availableListFormats) {
