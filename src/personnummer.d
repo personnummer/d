@@ -4,8 +4,8 @@ import std.range : sequence, stride, zip;
 import std.string : indexOf, replace;
 import std.conv : to;
 import std.datetime.date : DateTime;
-import std.datetime.systime : SysTime, Clock;
-import std.math : ceil;
+import std.datetime.systime : Clock;
+import std.math : ceil, floor;
 
 int lunh(string str)
 {
@@ -33,10 +33,10 @@ int lunh(string str)
 
 bool testDate(string year, string month, string day)
 {
-	int y = to!int(year);
-	int m = to!int(month);
-	int dd = to!int(day);
-	DateTime d = DateTime(y, m, dd);
+	const y = to!int(year);
+	const m = to!int(month);
+	const dd = to!int(day);
+	const d = DateTime(y, m, dd);
 	return d.year == y && d.month == m && d.day == dd;
 }
 
@@ -79,9 +79,32 @@ class Personnummer
 		return this.year ~ this.month ~ this.day ~ this.sep ~ this.num ~ this.check;
 	}
 
+	int getAge()
+	{
+		string ageDay = this.day;
+		if (this.isCoordinationNumber())
+		{
+			ageDay = to!string(to!int(ageDay) - 60);
+		}
+
+		auto t = Clock.currTime();
+		const d = DateTime(to!int(this.fullYear), to!int(this.month), to!int(ageDay), 0, 0);
+		const n = DateTime(t.year, t.month, t.day, 0, 0);
+		const days = (n - d).total!"days";
+
+		return to!int(floor(days * 0.00273790926));
+	}
+
 	bool isCoordinationNumber()
 	{
-		return testDate(this.fullYear, this.month, to!string(to!int(this.day) - 60));
+		try
+		{
+			return testDate(this.fullYear, this.month, to!string(to!int(this.day) - 60));
+		}
+		catch (Throwable)
+		{
+			return false;
+		}
 	}
 
 	bool isFemale()
@@ -91,7 +114,7 @@ class Personnummer
 
 	bool isMale()
 	{
-		int sexDigit = to!int(this.num[2 .. 3]);
+		const sexDigit = to!int(this.num[2 .. 3]);
 		return sexDigit % 2 == 1;
 	}
 
@@ -115,7 +138,7 @@ class Personnummer
 
 	private void _parse(string pin)
 	{
-		bool plus = indexOf(pin, '+') != -1;
+		const plus = indexOf(pin, '+') != -1;
 
 		pin = replace(pin, "+", "");
 		pin = replace(pin, "-", "");
@@ -143,7 +166,7 @@ class Personnummer
 		}
 
 		this.sep = "-";
-		SysTime currentTime = Clock.currTime();
+		const currentTime = Clock.currTime();
 
 		if (this.century.length == 0)
 		{
