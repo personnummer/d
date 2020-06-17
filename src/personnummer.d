@@ -165,6 +165,10 @@ class Personnummer
 			throw new PersonnummerException();
 		}
 
+		if (this.num == "000") {
+			throw new PersonnummerException();
+		}
+
 		this.sep = "-";
 		const currentTime = Clock.currTime();
 
