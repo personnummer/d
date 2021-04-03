@@ -1,6 +1,6 @@
 {
   "authors": ["Personnummer and Contributors"],
-  "copyright": "Copyright © 2020, Personnummer and Contributors",
+  "copyright": "Copyright © 2021, Personnummer and Contributors",
   "description": "Validate Swedish personal identity numbers.",
   "license": "MIT",
   "name": "personnummer",
