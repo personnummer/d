@@ -49,7 +49,7 @@ unittest
         {
             foreach (j, format; availableListFormats)
             {
-                if (format != "short_format" && indexOf(item["separated_format"].str, '+') == -1)
+                if (format != "short_format")
                 {
                     assert(item["separated_format"].str == Personnummer.parse(item[format].str)
                             .format());
@@ -116,7 +116,7 @@ unittest
 
             foreach (j, format; availableListFormats)
             {
-                if (format != "short_format" && indexOf(item["separated_format"].str, '+') == -1)
+                if (format != "short_format")
                 {
                     assert(expected == Personnummer.parse(item[format].str).getAge());
                 }
