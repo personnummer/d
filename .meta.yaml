@@ -1,0 +1,4 @@
+name: "D"
+maintainer: "@frozzare"
+spec: 3
+workflow: "d.yml"
