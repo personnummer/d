@@ -28,6 +28,18 @@ JSONValue testList()
     return _testList;
 }
 
+JSONValue _interimList;
+JSONValue interimList()
+{
+    if (_interimList.toString() == "null")
+    {
+        auto content = get(
+                "https://raw.githubusercontent.com/personnummer/meta/master/testdata/interim.json");
+        _interimList = parseJSON(content);
+    }
+    return _interimList;
+}
+
 // test personnummer list
 unittest
 {
@@ -87,6 +99,35 @@ unittest
             {
                 assert(item["isMale"].boolean == Personnummer.parse(item[format].str).isMale());
                 assert(item["isFemale"].boolean == Personnummer.parse(item[format].str).isFemale());
+            }
+        }
+    }
+}
+
+// test personnummer age
+unittest
+{
+    foreach (i, item; testList.array())
+    {
+        if (item["valid"].boolean)
+        {
+            string pin = item["separated_long"].str;
+            string year = pin[0 .. 4];
+            string month = pin[4 .. 6];
+            string day = pin[6 .. 8];
+            if (item["type"].str == "con")
+            {
+                day = to!string(to!int(day) - 60);
+            }
+
+            const expected = DateTime(to!int(year), to!int(month), to!int(day), 0, 0);
+
+            foreach (j, format; availableListFormats)
+            {
+                if (format != "short_format")
+                {
+                    assert(expected == Personnummer.parse(item[format].str).getDate());
+                }
             }
         }
     }

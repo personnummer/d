@@ -79,7 +79,7 @@ class Personnummer
 		return this.year ~ this.month ~ this.day ~ this.sep ~ this.num ~ this.check;
 	}
 
-	int getAge()
+	DateTime getDate()
 	{
 		string ageDay = this.day;
 		if (this.isCoordinationNumber())
@@ -87,9 +87,14 @@ class Personnummer
 			ageDay = to!string(to!int(ageDay) - 60);
 		}
 
+		return DateTime(to!int(this.fullYear), to!int(this.month), to!int(ageDay), 0, 0);
+	}
+
+	int getAge()
+	{
 		auto t = Clock.currTime();
-		const d = DateTime(to!int(this.fullYear), to!int(this.month), to!int(ageDay), 0, 0);
 		const n = DateTime(t.year, t.month, t.day, 0, 0);
+		const d = this.getDate();
 		const days = (n - d).total!"days";
 
 		return to!int(floor(days * 0.00273790926));
