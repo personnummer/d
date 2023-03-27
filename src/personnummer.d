@@ -6,7 +6,6 @@ import std.conv : to;
 import std.datetime.date : DateTime;
 import std.datetime.systime : Clock;
 import std.math : ceil, floor;
-import std.stdio;
 
 int lunh(string str)
 {
