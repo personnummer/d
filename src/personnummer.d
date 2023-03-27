@@ -6,6 +6,7 @@ import std.conv : to;
 import std.datetime.date : DateTime;
 import std.datetime.systime : Clock;
 import std.math : ceil, floor;
+import std.stdio;
 
 int lunh(string str)
 {
@@ -48,6 +49,11 @@ class PersonnummerException : Exception
 	}
 }
 
+class Options {
+	bool allowCoordinationNumber = true;
+	bool allowInterimNumber = false;
+}
+
 class Personnummer
 {
 	string century;
@@ -59,9 +65,13 @@ class Personnummer
 	string num;
 	string check;
 
-	this(string pin)
+	this(string pin, Options options = null)
 	{
-		this._parse(pin);
+		if (options is null) {
+			options = new Options();
+		}
+
+		this._parse(pin, options);
 
 		if (!this._valid())
 		{
@@ -112,6 +122,11 @@ class Personnummer
 		}
 	}
 
+	bool isInterimNumber()
+	{
+		return indexOf("TRSUWXJKLMN", this.num[0]) != -1;
+	}
+
 	bool isFemale()
 	{
 		return !this.isMale();
@@ -123,16 +138,16 @@ class Personnummer
 		return sexDigit % 2 == 1;
 	}
 
-	public static Personnummer parse(string pin)
+	public static Personnummer parse(string pin, Options options = null)
 	{
-		return new Personnummer(pin);
+		return new Personnummer(pin, options);
 	}
 
-	public static bool valid(string pin)
+	public static bool valid(string pin, Options options = null)
 	{
 		try
 		{
-			new Personnummer(pin);
+			new Personnummer(pin, options);
 			return true;
 		}
 		catch (PersonnummerException e)
@@ -141,7 +156,7 @@ class Personnummer
 		}
 	}
 
-	private void _parse(string pin)
+	private void _parse(string pin, Options options = null)
 	{
 		const plus = indexOf(pin, '+') != -1;
 
@@ -202,11 +217,24 @@ class Personnummer
 		}
 
 		this.fullYear = this.century ~ this.year;
+
+		if (this.isCoordinationNumber() && !options.allowCoordinationNumber) {
+			throw new PersonnummerException();
+		}
+
+		if (this.isInterimNumber() && !options.allowInterimNumber) {
+			throw new PersonnummerException();
+		}
 	}
 
 	private bool _valid()
 	{
-		bool valid = lunh(this.year ~ this.month ~ this.day ~ this.num) == to!int(this.check);
+		string num = this.num;
+		if (this.isInterimNumber()) {
+			num = '1' ~ num[1..3];
+		}
+
+		bool valid = lunh(this.year ~ this.month ~ this.day ~ num) == to!int(this.check);
 
 		try
 		{

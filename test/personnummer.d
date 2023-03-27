@@ -165,3 +165,52 @@ unittest
         }
     }
 }
+
+
+// test valid interim numbers
+unittest
+{
+    personnummer.Options options = new personnummer.Options();
+    options.allowInterimNumber = true;
+
+    foreach (i, item; interimList.array())
+    {
+        if (item["valid"].boolean)
+        {
+            foreach (j, format; availableListFormats)
+            {
+                if (format != "short_format")
+                {
+                    Personnummer p = Personnummer.parse(item[format].str, options);
+                    assert(item["separated_format"].str == p
+                            .format());
+                    assert(item["long_format"].str == p
+                            .format(true));
+                }
+            }
+        }
+    }
+}
+
+
+// test invalid interim numbers
+unittest
+{
+    personnummer.Options options = new personnummer.Options();
+    options.allowInterimNumber = true;
+
+    foreach (i, item; interimList.array())
+    {
+        if (!item["valid"].boolean)
+        {
+            foreach (j, format; availableListFormats)
+            {
+                try {
+                    Personnummer.parse(item[format].str, options);
+                } catch (personnummer.PersonnummerException err) {
+                    assert(err.message.length > 0);
+                }
+            }
+        }
+    }
+}
