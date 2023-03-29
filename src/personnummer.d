@@ -48,6 +48,11 @@ class PersonnummerException : Exception
 	}
 }
 
+class Options {
+	bool allowCoordinationNumber = true;
+	bool allowInterimNumber = false;
+}
+
 class Personnummer
 {
 	string century;
@@ -59,9 +64,13 @@ class Personnummer
 	string num;
 	string check;
 
-	this(string pin)
+	this(string pin, Options options = null)
 	{
-		this._parse(pin);
+		if (options is null) {
+			options = new Options();
+		}
+
+		this._parse(pin, options);
 
 		if (!this._valid())
 		{
@@ -79,7 +88,7 @@ class Personnummer
 		return this.year ~ this.month ~ this.day ~ this.sep ~ this.num ~ this.check;
 	}
 
-	int getAge()
+	DateTime getDate()
 	{
 		string ageDay = this.day;
 		if (this.isCoordinationNumber())
@@ -87,9 +96,14 @@ class Personnummer
 			ageDay = to!string(to!int(ageDay) - 60);
 		}
 
+		return DateTime(to!int(this.fullYear), to!int(this.month), to!int(ageDay), 0, 0);
+	}
+
+	int getAge()
+	{
 		auto t = Clock.currTime();
-		const d = DateTime(to!int(this.fullYear), to!int(this.month), to!int(ageDay), 0, 0);
 		const n = DateTime(t.year, t.month, t.day, 0, 0);
+		const d = this.getDate();
 		const days = (n - d).total!"days";
 
 		return to!int(floor(days * 0.00273790926));
@@ -107,6 +121,11 @@ class Personnummer
 		}
 	}
 
+	bool isInterimNumber()
+	{
+		return indexOf("TRSUWXJKLMN", this.num[0]) != -1;
+	}
+
 	bool isFemale()
 	{
 		return !this.isMale();
@@ -118,16 +137,16 @@ class Personnummer
 		return sexDigit % 2 == 1;
 	}
 
-	public static Personnummer parse(string pin)
+	public static Personnummer parse(string pin, Options options = null)
 	{
-		return new Personnummer(pin);
+		return new Personnummer(pin, options);
 	}
 
-	public static bool valid(string pin)
+	public static bool valid(string pin, Options options = null)
 	{
 		try
 		{
-			new Personnummer(pin);
+			new Personnummer(pin, options);
 			return true;
 		}
 		catch (PersonnummerException e)
@@ -136,7 +155,7 @@ class Personnummer
 		}
 	}
 
-	private void _parse(string pin)
+	private void _parse(string pin, Options options = null)
 	{
 		const plus = indexOf(pin, '+') != -1;
 
@@ -197,11 +216,24 @@ class Personnummer
 		}
 
 		this.fullYear = this.century ~ this.year;
+
+		if (this.isCoordinationNumber() && !options.allowCoordinationNumber) {
+			throw new PersonnummerException();
+		}
+
+		if (this.isInterimNumber() && !options.allowInterimNumber) {
+			throw new PersonnummerException();
+		}
 	}
 
 	private bool _valid()
 	{
-		bool valid = lunh(this.year ~ this.month ~ this.day ~ this.num) == to!int(this.check);
+		string num = this.num;
+		if (this.isInterimNumber()) {
+			num = '1' ~ num[1..3];
+		}
+
+		bool valid = lunh(this.year ~ this.month ~ this.day ~ num) == to!int(this.check);
 
 		try
 		{
