@@ -22,7 +22,7 @@ JSONValue testList()
     if (_testList.toString() == "null")
     {
         auto content = get(
-                "https://raw.githubusercontent.com/personnummer/meta/master/testdata/list.json");
+                "https://raw.githubusercontent.com/personnummer/meta/HEAD/testdata/list.json");
         _testList = parseJSON(content);
     }
     return _testList;
@@ -34,7 +34,7 @@ JSONValue interimList()
     if (_interimList.toString() == "null")
     {
         auto content = get(
-                "https://raw.githubusercontent.com/personnummer/meta/master/testdata/interim.json");
+                "https://raw.githubusercontent.com/personnummer/meta/HEAD/testdata/interim.json");
         _interimList = parseJSON(content);
     }
     return _interimList;
