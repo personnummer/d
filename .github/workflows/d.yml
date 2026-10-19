@@ -11,7 +11,7 @@ jobs:
     test:
       runs-on: ubuntu-latest
       steps:
-        - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         - uses: mihails-strasuns/setup-dlang@763d869b4d67e50c3ccd142108c8bca2da9df166 # v1.1.1
           with:
             compiler: dmd-latest
